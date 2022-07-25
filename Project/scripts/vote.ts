@@ -31,6 +31,8 @@ async function main() {
 
   console.log(`Miniting tokens to ${delegateeAddress}`);
   const mintTx = await tokenContract.mint(delegateeAddress, ethers.utils.parseEther(BASE_VOTE_POWER.toFixed(18)));
+  await mintTx.wait();
+  console.log(`Transaction completed. Hash: ${mintTx.hash}`);
 
   console.log(`Delegating votes to ${delegateeAddress}`);
   const delegateTx = await tokenContract.delegate(delegateeAddress);
