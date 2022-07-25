@@ -12,3 +12,5 @@ async function getResults(ballotContract: CustomBallot) {
   );
   console.log(`Winner is ${winnerName}`);
 }
+
+export { getProposals, getResults };
