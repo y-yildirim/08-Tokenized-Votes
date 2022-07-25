@@ -4,48 +4,37 @@ import "dotenv/config";
 import * as tokenJson from "../artifacts/contracts/Token.sol/MyToken.json";
 import * as ballotJson from "../artifacts/contracts/CustomBallot.sol/CustomBallot.json";
 import { checkBalance, getSigner } from "./utils/utils";
+import { CustomBallot } from "../typechain";
+import { getProposals } from "./utils/query-utils";
 
 async function main() {
   const signer = getSigner();
 
   checkBalance(signer, 0.01);
 
-  const tokenAddress = process.env.TOKEN_ADDRESS!;
   const ballotAddress = process.env.BALLOT_ADDRESS!;
-  const delegateeAddress = process.argv[2];
-  const proposal = process.argv[1];
+  const proposalIndex = Number(process.argv[2]);
   const BASE_VOTE_POWER = 10;
-
-  console.log(`Attaching token contract interface to address ${tokenAddress}`);
-  const tokenContract = new Contract(
-    tokenAddress,
-    tokenJson.abi,
-    signer
-  ).attach(tokenAddress);
+  const voteAmount = process.argv[3] ?? BASE_VOTE_POWER;
 
   const ballotContract = new Contract(
     ballotAddress,
     ballotJson.abi,
     signer
-  ).attach(ballotAddress);
+  ).attach(ballotAddress) as CustomBallot;
 
-  console.log(`Miniting tokens to ${delegateeAddress}`);
-  const mintTx = await tokenContract.mint(delegateeAddress, ethers.utils.parseEther(BASE_VOTE_POWER.toFixed(18)));
-  await mintTx.wait();
-  console.log(`Transaction completed. Hash: ${mintTx.hash}`);
+  const votingPower = Number(await ballotContract.votingPower());
+  if (votingPower < Number(voteAmount))
+    throw new Error("Not enough voting power!");
 
-  console.log(`Delegating votes to ${delegateeAddress}`);
-  const delegateTx = await tokenContract.delegate(delegateeAddress);
-  console.log("Awaiting confirmations");
-  await delegateTx.wait();
-  console.log(`Transaction completed. Hash: ${delegateTx.hash}`);
+  const proposals = await getProposals(ballotContract);
+  proposals.forEach((p) => console.log(p));
+  console.log(`Voting for ${proposals[proposalIndex]}`);
 
-  const getVotesTx = await tokenContract.getVotes(delegateeAddress);
-  console.log("processing...");
-  await getVotesTx.wait();
-  console.log(`Completed. Hash: ${getVotesTx.hash}`);
-
-  const voteTx = await tokenContract.connect(delegateeAddress).vote(proposal);
+  console.log(
+    `Attaching Ballot contract interface to address ${ballotAddress}`
+  );
+  const voteTx = await ballotContract.vote(proposalIndex, voteAmount);
   console.log("processing...");
   await voteTx.wait();
   console.log(`Completed. Hash: ${voteTx.hash}`);

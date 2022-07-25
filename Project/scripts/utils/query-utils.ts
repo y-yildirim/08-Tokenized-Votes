@@ -1,9 +1,19 @@
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 
 import { CustomBallot } from "../../typechain/CustomBallot";
 
-async function getProposals(ballotContract: CustomBallot) {
-  return (await ballotContract.getProposals()).forEach(console.log);
+async function getProposals(ballotContract: CustomBallot): Promise<string[]> {
+  // return (await ballotContract.getProposals()).map((p) =>
+  //   [
+  //     ethers.utils.parseBytes32String(p.name),
+  //     ethers.utils.parseBytes32String(p.voteCount.toString()),
+  //   ]
+  //     .join(" ")
+  //     .toString()
+  // );
+  return (await ballotContract.getProposals()).map((p) =>
+    ethers.utils.parseBytes32String(p.name)
+  );
 }
 
 async function getResults(ballotContract: CustomBallot) {
