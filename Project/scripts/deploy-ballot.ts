@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import "dotenv/config";
 
 import * as ballotJson from "../artifacts/contracts/CustomBallot.sol/CustomBallot.json";
-import { getSigner, checkBalance, convertStringArrayToBytes32 } from "./utils";
+import { getSigner, checkBalance, convertStringArrayToBytes32 } from "./utils/utils";
 
 async function main() {
   const signer = getSigner();

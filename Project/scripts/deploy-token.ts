@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import "dotenv/config";
 
 import * as tokenJson from "../artifacts/contracts/Token.sol/MyToken.json";
-import { getSigner, checkBalance } from "./utils";
+import { getSigner, checkBalance } from "./utils/utils";
 
 async function main() {
   const signer = getSigner();

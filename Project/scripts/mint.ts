@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import "dotenv/config";
 
 import * as tokenJson from "../artifacts/contracts/Token.sol/MyToken.json";
-import { getSigner } from "./utils";
+import { getSigner } from "./utils/utils";
 import { MyToken } from "../typechain/MyToken";
 
 async function main() {
