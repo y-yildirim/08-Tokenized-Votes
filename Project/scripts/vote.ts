@@ -3,9 +3,11 @@ import "dotenv/config";
 
 import * as tokenJson from "../artifacts/contracts/Token.sol/MyToken.json";
 import * as ballotJson from "../artifacts/contracts/CustomBallot.sol/CustomBallot.json";
-import { checkBalance, getSigner } from "./utils";
+import { checkBalance, getSigner } from "./utils/utils";
+import { CustomBallot } from "../typechain";
+import { getProposals } from "./utils/query-utils";
 
-async function main() {
+async function main() { 
   const signer = getSigner();
 
   checkBalance(signer, 0.01);
