@@ -29,7 +29,7 @@ async function main() {
     signer
   ).attach(ballotAddress);
 
-  console.log(`Miniting tokens to ${delegateeAddress}`);
+  console.log(`Minting tokens to ${delegateeAddress}`);
   const mintTx = await tokenContract.mint(delegateeAddress, ethers.utils.parseEther(BASE_VOTE_POWER.toFixed(18)));
   await mintTx.wait();
   console.log(`Transaction completed. Hash: ${mintTx.hash}`);
