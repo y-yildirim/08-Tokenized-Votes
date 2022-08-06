@@ -5,6 +5,12 @@ interface IERC20Votes {
     function getPastVotes(address, uint256) external view returns (uint256);
 }
 
+
+/// @title A Ballot contract for voting
+/// @author //
+/// @notice You can use this contract for learning purposes
+/// @dev All function calls are currently implemented without side effects
+
 contract CustomBallot {
     event Voted(
         address indexed voter,
@@ -24,6 +30,7 @@ contract CustomBallot {
     IERC20Votes public voteToken;
     uint256 public referenceBlock;
 
+/// constructor
     constructor(bytes32[] memory proposalNames, address _voteToken) {
         for (uint256 i = 0; i < proposalNames.length; i++) {
             proposals.push(Proposal({name: proposalNames[i], voteCount: 0}));
@@ -31,11 +38,12 @@ contract CustomBallot {
         voteToken = IERC20Votes(_voteToken);
         referenceBlock = block.number;
     }
-
+/// return all the proposals in the mapping
     function getProposals() external view returns (Proposal[] memory) {
         return proposals;
     }
 
+/// facilitate the voting processes
     function vote(uint256 proposal, uint256 amount) external {
         uint256 votingPowerAvailable = votingPower();
         require(votingPowerAvailable >= amount, "Has not enough voting power");
@@ -43,7 +51,7 @@ contract CustomBallot {
         proposals[proposal].voteCount += amount;
         emit Voted(msg.sender, proposal, amount, proposals[proposal].voteCount);
     }
-
+/// returns the proposal with the highest votes
     function winningProposal() public view returns (uint256 winningProposal_) {
         uint256 winningVoteCount = 0;
         for (uint256 p = 0; p < proposals.length; p++) {
@@ -53,11 +61,11 @@ contract CustomBallot {
             }
         }
     }
-
+/// returns the name of the proposal with the highest vote
     function winnerName() external view returns (bytes32 winnerName_) {
         winnerName_ = proposals[winningProposal()].name;
     }
-
+/// returns the voting power of an address 
     function votingPower() public view returns (uint256 votingPower_) {
         votingPower_ =
             voteToken.getPastVotes(msg.sender, referenceBlock) -
